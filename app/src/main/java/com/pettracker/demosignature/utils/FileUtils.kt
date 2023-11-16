@@ -54,59 +54,40 @@ object FileUtils {
 
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    val id: String
-                    var cursor: Cursor? = null
-                    try {
-                        cursor = context.contentResolver.query(
-                            uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null
-                        )
-                        if (cursor != null && cursor.moveToFirst()) {
-                            val fileName = cursor.getString(0)
-                            val path =
-                                Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName
-                            if (!TextUtils.isEmpty(path)) {
-                                return path
-                            }
-                        }
-                    } finally {
-                        cursor?.close()
-                    }
-                    id = DocumentsContract.getDocumentId(uri)
-                    if (!TextUtils.isEmpty(id)) {
-                        if (id.startsWith("raw:")) {
-                            return id.replaceFirst("raw:", "")
-                        }
-                        val contentUriPrefixesToTry = arrayOf(
-                            "content://downloads/public_downloads",
-                            "content://downloads/my_downloads"
-                        )
-                        for (contentUriPrefix in contentUriPrefixesToTry) {
-                            try {
-                                val contentUri =
-                                    ContentUris.withAppendedId(Uri.parse(contentUriPrefix), id.toLong())
-                                return getDataColumn(context, contentUri, null, null)
-                            } catch (e: NumberFormatException) {
-                                // In Android 8 and Android P, the id is not a number
-                                return uri.path?.replaceFirst("^/document/raw:", "")?.replaceFirst("^raw:", "")
-                            }
+                var cursor: Cursor? = null
+                try {
+                    cursor = context.contentResolver.query(
+                        uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null
+                    )
+                    if (cursor != null && cursor.moveToFirst()) {
+                        val fileName = cursor.getString(0)
+                        val path =
+                            Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName
+                        if (!TextUtils.isEmpty(path)) {
+                            return path
                         }
                     }
-                } else {
-                    val id = DocumentsContract.getDocumentId(uri)
-                    val isOreo = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                } finally {
+                    cursor?.close()
+                }
+                val id: String = DocumentsContract.getDocumentId(uri)
+                if (!TextUtils.isEmpty(id)) {
                     if (id.startsWith("raw:")) {
                         return id.replaceFirst("raw:", "")
                     }
-                    try {
-                        contentUri = ContentUris.withAppendedId(
-                            Uri.parse("content://downloads/public_downloads"), id.toLong()
-                        )
-                    } catch (e: NumberFormatException) {
-                        e.printStackTrace()
-                    }
-                    if (contentUri != null) {
-                        return getDataColumn(context, contentUri, null, null)
+                    val contentUriPrefixesToTry = arrayOf(
+                        "content://downloads/public_downloads",
+                        "content://downloads/my_downloads"
+                    )
+                    for (contentUriPrefix in contentUriPrefixesToTry) {
+                        try {
+                            val contentUri =
+                                ContentUris.withAppendedId(Uri.parse(contentUriPrefix), id.toLong())
+                            return getDataColumn(context, contentUri, null, null)
+                        } catch (e: NumberFormatException) {
+                            // In Android 8 and Android P, the id is not a number
+                            return uri.path?.replaceFirst("^/document/raw:", "")?.replaceFirst("^raw:", "")
+                        }
                     }
                 }
             }
@@ -139,11 +120,7 @@ object FileUtils {
             if (isGoogleDriveUri(uri)) {
                 return getDriveFilePath(uri, context)
             }
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N) {
-                return getMediaFilePathForN(uri, context)
-            } else {
-                return getDataColumn(context, uri, null, null)
-            }
+            return getDataColumn(context, uri, null, null)
         }
         // File
         else if ("file" == uri.scheme) {
@@ -233,45 +210,6 @@ object FileUtils {
             }
             Log.e("File Size", "Size " + file.length())
             inputStream?.close()
-            outputStream.close()
-            Log.e("File Path", "Path " + file.path)
-            Log.e("File Size", "Size " + file.length())
-        } catch (e: Exception) {
-            Log.e("Exception", e.message ?: "")
-        }
-        return file.path
-    }
-
-    private fun getMediaFilePathForN(uri: Uri, context: Context): String {
-        val returnUri = uri
-        val returnCursor = context.contentResolver.query(returnUri, null, null, null, null)
-        /*
-         * Get the column indexes of the data in the Cursor,
-         *     * move to the first row in the Cursor, get the data,
-         *     * and display it.
-         * */
-        val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: 0
-        val sizeIndex = returnCursor?.getColumnIndex(OpenableColumns.SIZE) ?: 0
-        returnCursor?.moveToFirst()
-        val name = (returnCursor?.getString(nameIndex))
-        val size = (returnCursor?.getLong(sizeIndex)).toString()
-        val file = File(context.filesDir, name)
-        try {
-            val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-            val outputStream = FileOutputStream(file)
-            var read: Int = 0
-            val maxBufferSize = 1 * 1024 * 1024
-            val bytesAvailable = inputStream?.available() ?: 0
-
-            //int bufferSize = 1024;
-            val bufferSize = Math.min(bytesAvailable, maxBufferSize)
-
-            val buffers = ByteArray(bufferSize)
-            while ((inputStream?.read(buffers)) != -1) {
-                outputStream.write(buffers, 0, read)
-            }
-            Log.e("File Size", "Size " + file.length())
-            inputStream.close()
             outputStream.close()
             Log.e("File Path", "Path " + file.path)
             Log.e("File Size", "Size " + file.length())

@@ -26,6 +26,7 @@
             android:id="@+id/btnAddImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="10sp"
             android:layout_weight="1"
             android:text="Image" />
 
@@ -51,5 +52,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Date" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Save" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

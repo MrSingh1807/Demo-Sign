@@ -139,15 +139,15 @@ fun View.beGone() {
 }
 
 
-fun Context.logDebug(value: String) {
+fun logDebug(value: String) {
     Log.d("MR_SINGH", "Debug: $value ")
 }
 
-fun Context.logInfo(value: String) {
+fun logInfo(value: String) {
     Log.i("MR_SINGH", "Info: $value ")
 }
 
-fun Context.logError(value: String) {
+fun logError(value: String) {
     Log.e("MR_SINGH", "Error: $value ")
 }
 

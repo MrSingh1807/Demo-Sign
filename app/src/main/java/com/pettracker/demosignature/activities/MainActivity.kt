@@ -29,7 +29,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
 
     private val pdfIntentLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
+            if (result.resultCode == RESULT_OK && result.resultCode != RESULT_CANCELED) {
                 val filePath = result.data?.data
                 Log.d("Result", filePath.toString())
 
@@ -148,4 +148,5 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
             )
         }
     }
+
 }

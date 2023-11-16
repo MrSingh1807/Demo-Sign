@@ -15,7 +15,8 @@ internal abstract class Graphic(
     val context: Context,
     val layoutId: Int,
     val viewType: ViewType,
-    val graphicManager: GraphicManager?) {
+    val graphicManager: GraphicManager?
+) {
 
     val rootView: View
 
@@ -38,19 +39,22 @@ internal abstract class Graphic(
         //when we remove the view from stack i.e onRemoveViewListener(ViewType viewType, int numberOfAddedViews);
         rootView.tag = viewType
         val imgClose = rootView.findViewById<ImageView>(R.id.imgPhotoEditorClose)
+        val imgSplit = rootView.findViewById<ImageView>(R.id.imgPhotoEditorSplit)
+
         imgClose?.setOnClickListener { graphicManager?.removeView(this@Graphic) }
     }
 
     protected fun toggleSelection() {
         val frmBorder = rootView.findViewById<View>(R.id.frmBorder)
         val imgClose = rootView.findViewById<View>(R.id.imgPhotoEditorClose)
+        val imgSplit = rootView.findViewById<View>(R.id.imgPhotoEditorSplit)
         if (frmBorder != null) {
             frmBorder.setBackgroundResource(R.drawable.rounded_border_tv)
             frmBorder.tag = true
         }
-        if (imgClose != null) {
-            imgClose.visibility = View.VISIBLE
-        }
+        if (imgClose != null) imgClose.visibility = View.VISIBLE
+        if (imgSplit != null) imgSplit.visibility = View.VISIBLE
+
     }
 
     protected fun buildGestureController(
