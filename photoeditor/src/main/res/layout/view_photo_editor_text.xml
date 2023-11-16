@@ -32,7 +32,7 @@
         android:src="@drawable/ic_remove" />
 
     <ImageView
-        android:id="@+id/imgPhotoEditorSplit"
+        android:id="@+id/imgPhotoEditorZoom"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_gravity="bottom|end"

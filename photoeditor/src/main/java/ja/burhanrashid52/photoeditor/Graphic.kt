@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import ja.burhanrashid52.photoeditor.MultiTouchListener.OnGestureControl
+import ja.burhanrashid52.photoeditor.utils.CustomSingleTouchListener
 
 /**
  * Created by Burhanuddin Rashid on 14/05/21.
@@ -39,7 +41,6 @@ internal abstract class Graphic(
         //when we remove the view from stack i.e onRemoveViewListener(ViewType viewType, int numberOfAddedViews);
         rootView.tag = viewType
         val imgClose = rootView.findViewById<ImageView>(R.id.imgPhotoEditorClose)
-        val imgSplit = rootView.findViewById<ImageView>(R.id.imgPhotoEditorSplit)
 
         imgClose?.setOnClickListener { graphicManager?.removeView(this@Graphic) }
     }
@@ -47,14 +48,20 @@ internal abstract class Graphic(
     protected fun toggleSelection() {
         val frmBorder = rootView.findViewById<View>(R.id.frmBorder)
         val imgClose = rootView.findViewById<View>(R.id.imgPhotoEditorClose)
-        val imgSplit = rootView.findViewById<View>(R.id.imgPhotoEditorSplit)
+        val imgZoom = rootView.findViewById<View>(R.id.imgPhotoEditorZoom)
         if (frmBorder != null) {
             frmBorder.setBackgroundResource(R.drawable.rounded_border_tv)
             frmBorder.tag = true
         }
         if (imgClose != null) imgClose.visibility = View.VISIBLE
-        if (imgSplit != null) imgSplit.visibility = View.VISIBLE
+        if (imgZoom != null) imgZoom.visibility = View.VISIBLE
 
+//        imgZoom?.setOnClickListener {
+//            Toast.makeText(rootView.context, "Zoom Clicked", Toast.LENGTH_SHORT).show()
+//        }
+
+        imgZoom.setOnTouchListener(CustomSingleTouchListener(rootView))
+        graphicManager?.onPhotoEditorListener?.onViewInstance(rootView)
     }
 
     protected fun buildGestureController(

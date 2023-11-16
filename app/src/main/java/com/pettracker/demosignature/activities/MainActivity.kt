@@ -5,9 +5,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +24,8 @@ import com.pettracker.demosignature.utils.imageBitmaps
 import com.pettracker.demosignature.utils.logDebug
 import com.pettracker.demosignature.utils.logInfo
 import com.pettracker.demosignature.utils.pdfToBitmap
+import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
+import ja.burhanrashid52.photoeditor.ViewType
 import java.io.File
 
 
@@ -42,7 +46,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
                 }
 
                 imageBitmaps = images
-                startActivity(Intent(mContext, HomeActivity::class.java))
+                val pdfIntent = Intent(mContext, HomeActivity::class.java)
+                pdfIntent.putExtra("isFrom", "pfdIntent")
+                startActivity(pdfIntent)
 
                 /* binding.apply {
                      clPdfView.visibility = View.VISIBLE
@@ -59,13 +65,18 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
             // photo picker.
             if (uri != null) {
                 val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+                val img = listOf(bitmap)
+
+                imageBitmaps = img
+                val pdfIntent = Intent(mContext, HomeActivity::class.java)
+                pdfIntent.putExtra("isFrom", "galleryIntent")
+                startActivity(pdfIntent)
 
                 Log.d("PhotoPicker", "Selected URI: $uri")
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
-
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun initViews() {
@@ -97,14 +108,16 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
                     dialog.show()
                 }
             }
-
             btnPrevious.setOnClickListener {
                 cvPickMedia.visibility = View.VISIBLE
                 clPdfView.visibility = View.GONE
             }
-
             btnNext.setOnClickListener {
                 startActivity(Intent(mContext, HomeActivity::class.java))
+            }
+
+            btnTesting.setOnClickListener {
+                startActivity(Intent(mContext, TestingActivity::class.java))
             }
         }
     }
@@ -120,12 +133,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
             arrayListOf(Manifest.permission.READ_MEDIA_IMAGES)
         }
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            permissions.add(
-//                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-//            )
-//        }
-
         AksPermission.with(this)
             .permissions(permissions)
             .isShowDefaultSettingDialog(true)
@@ -136,16 +143,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun grantManageStoragePermission() {
-        if (checkCallingOrSelfPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            val uri = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+    val storagePermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                if (Environment.isExternalStorageManager()) {
+                    // Permission granted. Now resume your workflow.
+                }
+            }
+        }
 
-            startActivity(
-                Intent(
-                    Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                    uri
-                )
-            )
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun grantManageStoragePermission() {
+        if (!Environment.isExternalStorageManager()) {
+            val uri = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+            val storageIntent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+            storagePermissionLauncher.launch(storageIntent)
         }
     }
 

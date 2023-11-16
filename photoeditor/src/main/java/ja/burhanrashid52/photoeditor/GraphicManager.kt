@@ -1,5 +1,6 @@
 package ja.burhanrashid52.photoeditor
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
@@ -14,6 +15,8 @@ internal class GraphicManager(
     private val mViewState: PhotoEditorViewState
 ) {
     var onPhotoEditorListener: OnPhotoEditorListener? = null
+
+    @SuppressLint("ClickableViewAccessibility")
     fun addView(graphic: Graphic) {
         val view = graphic.rootView
         val params = RelativeLayout.LayoutParams(
@@ -27,6 +30,7 @@ internal class GraphicManager(
             graphic.viewType,
             mViewState.addedViewsCount
         )
+
     }
 
     fun removeView(graphic: Graphic) {

@@ -13,6 +13,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -149,6 +150,10 @@ fun logInfo(value: String) {
 
 fun logError(value: String) {
     Log.e("MR_SINGH", "Error: $value ")
+}
+
+fun Context.toast(value: String) {
+    Toast.makeText(this, value, Toast.LENGTH_SHORT).show()
 }
 
 //todo: Usage example
