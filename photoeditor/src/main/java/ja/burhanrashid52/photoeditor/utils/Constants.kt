@@ -4,5 +4,8 @@ import android.util.Log
 
 
 fun logDebug(value: String){
-    Log.d("Mr_Singh", "logDebug: ")
+    Log.d("Mr_Singh", "logDebug: $value")
+}
+fun logInfo(value: String){
+    Log.d("Mr_Singh", "logInfo: $value")
 }

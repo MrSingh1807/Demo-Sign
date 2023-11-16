@@ -1,5 +1,6 @@
 package ja.burhanrashid52.photoeditor.utils
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Matrix
 import android.graphics.PointF
@@ -7,42 +8,38 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import android.view.View.ROTATION
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
 
+    val rotationThreshold = 15f // This value determines the minimum angle difference for rotation
+
     private var midPoint = PointF()
     private val moveMatrix = Matrix()
     private val downMatrix = Matrix()
+
+    private var previousDifference: Double = 0.0
 
     private var oldDistance = 0f
     private var oldRotation = 0f
 
 
-    var startTouchX: Float = 0f
-    var startTouchY: Float = 0f
+    //    var startTouchX: Float = 0f
+//    var startTouchY: Float = 0f
     var startScale: Float = 1f
     var startAngle: Float = 0f
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         logDebug("Action: ACTION_POINTER_DOWN")
-        val action = event?.action
 
-        when (action) {
-            MotionEvent.ACTION_POINTER_DOWN -> {
-                oldDistance = calculateDistance(event)
-                oldRotation = calculateRotation(event)
-
-                midPoint = calculateMidPoint(event)
-
-                logDebug("Action: ACTION_POINTER_DOWN")
-            }
-
+        when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
-                startTouchX = /*event.rawX*/ rootView.x + rootView.width / 2
-                startTouchY = /*event.rawY*/ rootView.y + rootView.width / 2
+                calculateMidPoint(event)
+
                 startScale = rootView.scaleX
                 startAngle = rootView.rotation
 
@@ -51,39 +48,44 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
             }
 
             MotionEvent.ACTION_MOVE -> {
-//                val centerX = rootView.x + rootView.width / 2
-//                val centerY = rootView.y + rootView.width / 2
-
                 val currentTouchX = event.rawX
                 val currentTouchY = event.rawY
 
                 // Calculate the delta in touch coordinates
-                val deltaX = currentTouchX - startTouchX
-                val deltaY = currentTouchY - startTouchY
+                val deltaX = currentTouchX - midPoint.x
+                val deltaY = currentTouchY - midPoint.y
+
 
                 // Calculate the distance from the center point
                 val distanceFromCenter =
                     sqrt(deltaX * deltaX + (deltaY * deltaY).toDouble())
 
+                logInfo("DistanceFromCenter: $distanceFromCenter")
 
                 // Zoom based on distance from center point
-                val zoomFactor = if (distanceFromCenter > 0) 1.01f else 0.99f
+                val zoomFactor = if ((distanceFromCenter - previousDifference) > 0) 1.1f else 0.9f
                 rootView.scaleX = startScale * zoomFactor
                 rootView.scaleY = startScale * zoomFactor
 
-                // Calculate rotation angle
-                val angle =
-                    atan2(deltaY.toDouble(), deltaX.toDouble()) * 180f / Math.PI
+                val touchAngle = atan2(deltaY.toDouble(), deltaX.toDouble()) * 360f / Math.PI
 
-                // Rotate the image
-                rootView.rotation = startAngle + angle.toFloat()
+                val angleDifference = abs(touchAngle - startAngle)
+                if (angleDifference > rotationThreshold) {
+                    // Animate the rotation
+                    ObjectAnimator.ofFloat(rootView, ROTATION, startAngle, touchAngle.toFloat())
+
+                        .setDuration(150).start()
+                    // Rotate the image
+//                rootView.rotation = startAngle + angle.toFloat()
+
+                    // Update starting angle for next touch move event
+                    startAngle = touchAngle.toFloat()
+                }
 
                 // Update starting coordinates for next touch move event
-                startTouchX = currentTouchX
-                startTouchY = currentTouchY
+                midPoint = calculateMidPoint(event)
                 startScale = rootView.scaleX
-                startAngle = rootView.rotation
-
+                previousDifference = distanceFromCenter
 
                 logDebug("Action: ACTION_MOVE")
                 return true
@@ -92,21 +94,6 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
 
         Log.d("Mr_Singh", "onTouchEvent: Reached ")
         return false
-    }
-
-    fun zoomAndRotateSticker(view: View?, event: MotionEvent) {
-        if (view != null) {
-            Log.d("Mr_Singh", "zoomAndRotateSticker: Reached")
-            val newDistance: Float = calculateDistance(midPoint.x, midPoint.y, event.x, event.y)
-            val newRotation: Float = calculateRotation(midPoint.x, midPoint.y, event.x, event.y)
-            moveMatrix.set(downMatrix)
-            moveMatrix.postScale(
-                newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
-                midPoint.y
-            )
-            moveMatrix.postRotate(newRotation - oldRotation, midPoint.x, midPoint.y)
-//            view.setMatrix(moveMatrix)
-        }
     }
 
     protected fun calculateRotation(event: MotionEvent?): Float {
