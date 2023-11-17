@@ -15,16 +15,11 @@ import kotlin.math.sqrt
 
 class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
 
-    val rotationThreshold = 15f // This value determines the minimum angle difference for rotation
+    private val rotationThreshold =
+        10f // This value determines the minimum angle difference for rotation
 
     private var midPoint = PointF()
-    private val moveMatrix = Matrix()
-    private val downMatrix = Matrix()
-
     private var previousDifference: Double = 0.0
-
-    private var oldDistance = 0f
-    private var oldRotation = 0f
 
 
     //    var startTouchX: Float = 0f
@@ -63,17 +58,22 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
                 logInfo("DistanceFromCenter: $distanceFromCenter")
 
                 // Zoom based on distance from center point
-                val zoomFactor = if ((distanceFromCenter - previousDifference) > 0) 1.1f else 0.9f
+                val zoomFactor = if ((distanceFromCenter - previousDifference) > 0) 1.05f else 0.95f
                 rootView.scaleX = startScale * zoomFactor
                 rootView.scaleY = startScale * zoomFactor
 
-                val touchAngle = atan2(deltaY.toDouble(), deltaX.toDouble()) * 360f / Math.PI
+//                val touchAngle = calculateRotation(event)
+                val touchAngle = atan2(deltaY, deltaX) * 360f / Math.PI
 
                 val angleDifference = abs(touchAngle - startAngle)
+
+//                // Animate the rotation
+//                ObjectAnimator.ofFloat(rootView, ROTATION, startAngle, touchAngle.toFloat())
+//                    .setDuration(150).start()
+
                 if (angleDifference > rotationThreshold) {
                     // Animate the rotation
                     ObjectAnimator.ofFloat(rootView, ROTATION, startAngle, touchAngle.toFloat())
-
                         .setDuration(150).start()
                     // Rotate the image
 //                rootView.rotation = startAngle + angle.toFloat()
@@ -105,7 +105,7 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
     protected fun calculateRotation(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val x = (x1 - x2).toDouble()
         val y = (y1 - y2).toDouble()
-        val radians = Math.atan2(y, x)
+        val radians = atan2(y, x)
         return Math.toDegrees(radians).toFloat()
     }
 
@@ -118,13 +118,13 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
         } else calculateDistance(event.getX(0), event.getY(0), event.getX(1), event.getY(1))
     }
 
-    fun calculateDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+    private fun calculateDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         val x = (x1 - x2).toDouble()
         val y = (y1 - y2).toDouble()
         return sqrt(x * x + y * y).toFloat()
     }
 
-    fun calculateMidPoint(event: MotionEvent?): PointF {
+    private fun calculateMidPoint(event: MotionEvent?): PointF {
         if (event == null || event.pointerCount < 2) {
             midPoint[0f] = 0f
             return midPoint
