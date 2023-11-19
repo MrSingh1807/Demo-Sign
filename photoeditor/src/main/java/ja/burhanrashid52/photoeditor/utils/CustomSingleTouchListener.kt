@@ -1,39 +1,38 @@
 package ja.burhanrashid52.photoeditor.utils
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
-import android.view.View.ROTATION
-import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
 
-    private val rotationThreshold =
-        10f // This value determines the minimum angle difference for rotation
-
     private var midPoint = PointF()
     private var previousDifference: Double = 0.0
 
-
-    //    var startTouchX: Float = 0f
-//    var startTouchY: Float = 0f
     var startScale: Float = 1f
     var startAngle: Float = 0f
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(view: View?, event: MotionEvent?): Boolean {
-        logDebug("Action: ACTION_POINTER_DOWN")
+    private var lastX: Float = 0f
+    private var rotationAngle: Float = 0f
 
-        when (event?.action) {
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouch(view: View?, event: MotionEvent): Boolean {
+        logDebug("Action: ACTION_POINTER_DOWN")
+//        val x = event.x
+
+        val rootX = rootView.x
+        val rootY = rootView.y
+
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 calculateMidPoint(event)
+
+                lastX = rootX
 
                 startScale = rootView.scaleX
                 startAngle = rootView.rotation
@@ -58,38 +57,35 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
                 logInfo("DistanceFromCenter: $distanceFromCenter")
 
                 // Zoom based on distance from center point
-                val zoomFactor = if ((distanceFromCenter - previousDifference) > 0) 1.05f else 0.95f
+                val zoomFactor = if ((distanceFromCenter - previousDifference) > 0) 1.02f else 0.98f
                 rootView.scaleX = startScale * zoomFactor
                 rootView.scaleY = startScale * zoomFactor
 
-//                val touchAngle = calculateRotation(event)
+
                 val touchAngle = atan2(deltaY, deltaX) * 360f / Math.PI
 
-                val angleDifference = abs(touchAngle - startAngle)
-
-//                // Animate the rotation
-//                ObjectAnimator.ofFloat(rootView, ROTATION, startAngle, touchAngle.toFloat())
-//                    .setDuration(150).start()
-
-                if (angleDifference > rotationThreshold) {
-                    // Animate the rotation
-                    ObjectAnimator.ofFloat(rootView, ROTATION, startAngle, touchAngle.toFloat())
-                        .setDuration(150).start()
-                    // Rotate the image
-//                rootView.rotation = startAngle + angle.toFloat()
-
-                    // Update starting angle for next touch move event
-                    startAngle = touchAngle.toFloat()
+//                val delX = rootX - lastX
+                // Rotate the view based on the drag direction
+                if (touchAngle > startAngle) {
+                    // Clockwise rotation
+                    rotationAngle += 3
+                } else {
+                    // Anti-clockwise rotation
+                    rotationAngle -= 3
                 }
 
                 // Update starting coordinates for next touch move event
                 midPoint = calculateMidPoint(event)
                 startScale = rootView.scaleX
                 previousDifference = distanceFromCenter
+                lastX = rootX
 
+                // Rotate the parent FrameLayout
+                rootView.rotation = rotationAngle
                 logDebug("Action: ACTION_MOVE")
                 return true
             }
+
         }
 
         Log.d("Mr_Singh", "onTouchEvent: Reached ")
