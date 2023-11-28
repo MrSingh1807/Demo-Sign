@@ -25,7 +25,7 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
     val coordinatesUtil = CoordinatesUtil()
     var allPoints: ViewCoordinates? = null
 
-    private var rotationAngle: Float = 0f
+    private var rotationAngle: Double = 0.0
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View?, event: MotionEvent): Boolean {
@@ -100,7 +100,6 @@ class CustomSingleTouchListener(val rootView: View) : OnTouchListener {
                     newCoordinates.component1().beInt(), newCoordinates.component2().beInt(),
                     newCoordinates.component3().beInt(), newCoordinates.component4().beInt()
                 )
-
 
 
                 // Update starting coordinates for next touch move event
