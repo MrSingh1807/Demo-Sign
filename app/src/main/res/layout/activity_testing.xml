@@ -10,12 +10,27 @@
         android:id="@+id/sticker_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:layout_editor_absoluteX="136dp"
+        tools:layout_editor_absoluteY="361dp">
         <!-- custom, maybe you will like to put an ImageView-->
         <ImageView
-            android:src="@drawable/pick_media"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:src="@drawable/pick_media" />
+
     </com.xiaopo.flying.sticker.StickerView>
 
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Singh"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

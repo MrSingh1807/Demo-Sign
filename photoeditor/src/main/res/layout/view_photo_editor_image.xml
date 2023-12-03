@@ -39,4 +39,13 @@
         android:elevation="1dp"
         android:src="@drawable/ic_split" />
 
+    <ImageView
+        android:id="@+id/imgPhotoEditorRotate"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="top|end"
+        android:elevation="1dp"
+        android:src="@drawable/ic_rotate" />
+
 </FrameLayout>

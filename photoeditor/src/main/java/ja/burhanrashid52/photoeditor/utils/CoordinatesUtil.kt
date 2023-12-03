@@ -1,11 +1,9 @@
 package ja.burhanrashid52.photoeditor.utils
 
-import android.app.Application
-import com.pettracker.demosignature.modals.Point
 import android.view.View
 import com.pettracker.demosignature.modals.Line
+import com.pettracker.demosignature.modals.Point
 import com.pettracker.demosignature.modals.ViewCoordinates
-import kotlin.math.PI
 import kotlin.math.acos
 import kotlin.math.atan2
 import kotlin.math.cos

@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import ja.burhanrashid52.photoeditor.MultiTouchListener.OnGestureControl
-import ja.burhanrashid52.photoeditor.utils.CustomSingleTouchListener
+import ja.burhanrashid52.photoeditor.utils.RotateTouchListener
+import ja.burhanrashid52.photoeditor.utils.ZoomTouchListener
 
 /**
  * Created by Burhanuddin Rashid on 14/05/21.
@@ -47,7 +48,8 @@ internal abstract class Graphic(
     protected fun toggleSelection() {
         val frmBorder = rootView.findViewById<View>(R.id.frmBorder)
         val imgClose = rootView.findViewById<View>(R.id.imgPhotoEditorClose)
-        val imgZoom = rootView.findViewById<View>(R.id.imgPhotoEditorZoom)
+        val imgZoom = rootView.findViewById<ImageView>(R.id.imgPhotoEditorZoom)
+        val imgRotate = rootView.findViewById<ImageView>(R.id.imgPhotoEditorRotate)
         if (frmBorder != null) {
             frmBorder.setBackgroundResource(R.drawable.rounded_border_tv)
             frmBorder.tag = true
@@ -59,7 +61,8 @@ internal abstract class Graphic(
 //            Toast.makeText(rootView.context, "Zoom Clicked", Toast.LENGTH_SHORT).show()
 //        }
 
-        imgZoom.setOnTouchListener(CustomSingleTouchListener(rootView))
+        imgRotate.setOnTouchListener(RotateTouchListener(rootView))
+        imgZoom.setOnTouchListener(ZoomTouchListener(rootView))
         graphicManager?.onPhotoEditorListener?.onViewInstance(rootView)
     }
 
