@@ -3,6 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        jcenter()
         maven { url = uri("https://jitpack.io") }
 
     }
@@ -12,6 +13,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()
         maven { url = uri("https://jitpack.io") }
     }
 }
@@ -19,3 +21,4 @@ dependencyResolutionManagement {
 rootProject.name = "Demo Signature"
 include(":app")
 include(":sticker", ":photoeditor")
+

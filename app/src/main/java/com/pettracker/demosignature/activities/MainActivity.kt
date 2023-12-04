@@ -2,14 +2,13 @@ package com.pettracker.demosignature.activities
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,12 +19,12 @@ import com.pettracker.demosignature.BuildConfig
 import com.pettracker.demosignature.baseClass.BaseBindingActivity
 import com.pettracker.demosignature.databinding.ActivityMainBinding
 import com.pettracker.demosignature.utils.FileUtils
+import com.pettracker.demosignature.utils.cameraImageBitmap
+import com.pettracker.demosignature.utils.cameraImageUri
 import com.pettracker.demosignature.utils.imageBitmaps
 import com.pettracker.demosignature.utils.logDebug
 import com.pettracker.demosignature.utils.logInfo
 import com.pettracker.demosignature.utils.pdfToBitmap
-import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
-import ja.burhanrashid52.photoeditor.ViewType
 import java.io.File
 
 
@@ -78,6 +77,22 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
             }
         }
 
+    private val cameraIntentLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == RESULT_OK) {
+            val bitmap = it.data?.extras?.get("data") as Bitmap
+            val uri = it.data!!.data
+
+            cameraImageBitmap = bitmap
+            cameraImageUri = uri
+            logDebug(uri.toString())
+
+            val intent = Intent(this, UCropActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.R)
     override fun initViews() {
         grantManageStoragePermission()
@@ -103,6 +118,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
                             intent.type = "application/pdf"
                             pdfIntentLauncher.launch(intent)
                         }
+                        .setNeutralButton("Camera") { _, _ ->
+                            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                            cameraIntentLauncher.launch(cameraIntent)
+                        }
                         .create()
 
                     dialog.show()
@@ -126,11 +145,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
 
         val permissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             arrayListOf(
+                Manifest.permission.CAMERA,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
             )
         } else {
-            arrayListOf(Manifest.permission.READ_MEDIA_IMAGES)
+            arrayListOf(Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES)
         }
 
         AksPermission.with(this)

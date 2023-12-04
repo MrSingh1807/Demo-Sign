@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.TestingActivity">
+    tools:context=".activities.TestingActivity"
+    tools:ignore="MissingClass">
 
     <com.xiaopo.flying.sticker.StickerView
         android:id="@+id/sticker_view"
@@ -16,13 +17,18 @@
         tools:layout_editor_absoluteY="361dp">
         <!-- custom, maybe you will like to put an ImageView-->
         <ImageView
+            android:id="@+id/stickerIV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/pick_media" />
 
     </com.xiaopo.flying.sticker.StickerView>
 
-
+    <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/pdfView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <Button
         android:id="@+id/button"

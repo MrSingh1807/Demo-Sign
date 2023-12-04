@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ir.backend.js.compile
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -57,8 +55,10 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("com.github.barteksc:pdfium-android:1.9.0")
-    implementation("com.github.barteksc:android-pdf-viewer:2.8.2")
+    implementation ("com.github.barteksc:android-pdf-viewer:2.8.2")
     implementation("com.github.AkshayHarsoda:AksPermission-Android:1.1.0")
+    implementation("org.jetbrains.anko:anko:0.10.8")
+    implementation("com.github.yalantis:ucrop:2.2.8")
 
     implementation("com.itextpdf:itextg:5.5.10")
     implementation(project(path = ":sticker"))
