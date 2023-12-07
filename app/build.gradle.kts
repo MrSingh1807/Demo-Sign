@@ -49,7 +49,6 @@ dependencies {
 
     implementation("androidx.activity:activity-ktx:1.8.1")
 
-
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -59,6 +58,14 @@ dependencies {
     implementation("com.github.AkshayHarsoda:AksPermission-Android:1.1.0")
     implementation("org.jetbrains.anko:anko:0.10.8")
     implementation("com.github.yalantis:ucrop:2.2.8")
+
+    val camerax_version = "1.3.0"
+// CameraX core library using camera2 implementation
+    implementation ("androidx.camera:camera-camera2:$camerax_version")
+// CameraX Lifecycle Library
+    implementation ("androidx.camera:camera-lifecycle:$camerax_version")
+// CameraX View class
+    implementation ("androidx.camera:camera-view:$camerax_version")
 
     implementation("com.itextpdf:itextg:5.5.10")
     implementation(project(path = ":sticker"))

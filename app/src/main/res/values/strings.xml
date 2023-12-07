@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Demo Signature</string>
+    <string name="take_photo">Capture</string>
 </resources>

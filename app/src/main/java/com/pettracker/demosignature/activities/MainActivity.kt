@@ -9,6 +9,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,15 +17,18 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import com.akshay.harsoda.permission.helper.AksPermission
 import com.pettracker.demosignature.BuildConfig
+import com.pettracker.demosignature.R
 import com.pettracker.demosignature.baseClass.BaseBindingActivity
 import com.pettracker.demosignature.databinding.ActivityMainBinding
 import com.pettracker.demosignature.utils.FileUtils
+import com.pettracker.demosignature.utils.PopupMenuCustomLayout
 import com.pettracker.demosignature.utils.cameraImageBitmap
 import com.pettracker.demosignature.utils.cameraImageUri
 import com.pettracker.demosignature.utils.imageBitmaps
 import com.pettracker.demosignature.utils.logDebug
 import com.pettracker.demosignature.utils.logInfo
 import com.pettracker.demosignature.utils.pdfToBitmap
+import com.pettracker.demosignature.utils.toast
 import java.io.File
 
 
@@ -136,9 +140,34 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
             }
 
             btnTesting.setOnClickListener {
-                startActivity(Intent(mContext, TestingActivity::class.java))
+//                startActivity(Intent(mContext, TestingActivity::class.java))
+                showPopUpWindow(it)
+            }
+            btnTesting2.setOnClickListener {
+//                showPopUpMenu()
+                showPopUpWindow(it)
+
+            }
+
+            openCamera.setOnClickListener {
+                askPermissions {
+                    startActivity(Intent(mContext, CameraXActivity::class.java))
+                }
             }
         }
+    }
+
+    private fun showPopUpWindow(anchorView: View) {
+        val popupMenu = PopupMenuCustomLayout(
+            this, R.layout.custom_popup
+        ) { itemId -> // log statement: "Clicked on: " + itemId
+            toast("Clicked")
+        }
+// Method 1: popupMenu.show();
+// Method 2: via an anchor view:
+// Method 1: popupMenu.show();
+// Method 2: via an anchor view:
+        popupMenu.show(anchorView, Gravity.CENTER, 1, 1)
     }
 
     private fun askPermissions(doWhatEver: () -> Unit = {}) {
