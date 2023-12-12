@@ -99,7 +99,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun initViews() {
-        grantManageStoragePermission()
+//        grantManageStoragePermission()
 
         with(binding) {
 
@@ -140,8 +140,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
             }
 
             btnTesting.setOnClickListener {
-//                startActivity(Intent(mContext, TestingActivity::class.java))
-                showPopUpWindow(it)
+                startActivity(Intent(mContext, TestingActivity::class.java))
+//                showPopUpWindow(it)
             }
             btnTesting2.setOnClickListener {
 //                showPopUpMenu()
