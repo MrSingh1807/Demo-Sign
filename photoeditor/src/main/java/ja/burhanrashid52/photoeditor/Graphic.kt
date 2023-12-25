@@ -1,9 +1,11 @@
 package ja.burhanrashid52.photoeditor
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import androidx.lifecycle.LifecycleOwner
 import ja.burhanrashid52.photoeditor.MultiTouchListener.OnGestureControl
 import ja.burhanrashid52.photoeditor.utils.RotateTouchListener
 import ja.burhanrashid52.photoeditor.utils.ZoomTouchListener
@@ -45,6 +47,7 @@ internal abstract class Graphic(
         imgClose?.setOnClickListener { graphicManager?.removeView(this@Graphic) }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     protected fun toggleSelection() {
         val frmBorder = rootView.findViewById<View>(R.id.frmBorder)
         val imgClose = rootView.findViewById<View>(R.id.imgPhotoEditorClose)
@@ -61,7 +64,28 @@ internal abstract class Graphic(
 //            Toast.makeText(rootView.context, "Zoom Clicked", Toast.LENGTH_SHORT).show()
 //        }
 
-        imgRotate.setOnTouchListener(RotateTouchListener(rootView))
+        var startAngle = 0f
+        val rotateTouchListener = RotateTouchListener(rootView,
+            object : RotateTouchListener.RotateListener {
+                override fun onRotate(startAng: Float, updatedAngle: Float) {
+                    startAngle = startAng
+                }
+            })
+        imgRotate.setOnTouchListener(rotateTouchListener)
+
+        var rotationAngle = 0f
+        rotateTouchListener.rotateAngle.observe((context as LifecycleOwner)) {
+//             Rotate the view based on the drag direction
+            if (it > startAngle) {
+                // Clockwise rotation
+                rotationAngle += 5
+            } else {
+                // Anti-clockwise rotation
+                rotationAngle -= 5
+            }
+            rootView.rotation = rotationAngle
+        }
+
         imgZoom.setOnTouchListener(ZoomTouchListener(rootView))
         graphicManager?.onPhotoEditorListener?.onViewInstance(rootView)
     }

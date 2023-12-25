@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
+    <Button
+        android:id="@+id/newFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Filter Activity" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clPdfView"
         android:visibility="gone"

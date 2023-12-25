@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.CameraXActivity">
 
-    <androidx.camera.view.PreviewView
+    <TextureView
         android:id="@+id/viewFinder"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

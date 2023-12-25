@@ -7,16 +7,14 @@
         android:required="false" />
     <uses-feature android:name="android.hardware.camera.any" />
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<!--    <uses-permission-->
-<!--        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"-->
-<!--        tools:ignore="ScopedStorage" />-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- <uses-permission -->
+    <!-- android:name="android.permission.MANAGE_EXTERNAL_STORAGE" -->
+    <!-- tools:ignore="ScopedStorage" /> -->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -33,6 +31,13 @@
         android:theme="@style/Theme.DemoSignature"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".stickerViewDemo.StickerViewTestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ApplyFilterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DemoSignature" />
         <activity
             android:name=".activities.CameraXActivity"
             android:exported="false" />

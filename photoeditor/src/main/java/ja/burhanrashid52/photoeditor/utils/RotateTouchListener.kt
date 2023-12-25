@@ -5,11 +5,13 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import androidx.lifecycle.MutableLiveData
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 
-class RotateTouchListener(var rootView: View) : OnTouchListener {
+class RotateTouchListener(var rootView: View, val rotateListener: RotateListener) :
+    OnTouchListener {
 
     private var midPoint = PointF()
     private var previousDifference: Double = 0.0
@@ -19,9 +21,16 @@ class RotateTouchListener(var rootView: View) : OnTouchListener {
 
     private var rotationAngle: Float = 0f
 
+    val rotateAngle = MutableLiveData<Float>()
+
+    interface RotateListener {
+        fun onRotate(startAngle: Float, updatedAngle: Float)
+    }
+
     override fun onTouch(p0: View?, event: MotionEvent): Boolean {
 
         when (event.action) {
+
             MotionEvent.ACTION_DOWN -> {
                 calculateMidPoint(event)
 
@@ -47,21 +56,21 @@ class RotateTouchListener(var rootView: View) : OnTouchListener {
 
                 val touchAngle = atan2(deltaY, deltaX) * 360f / Math.PI
 
-                // Rotate the view based on the drag direction
-                if (touchAngle > startAngle) {
-                    // Clockwise rotation
-                    rotationAngle += 3
-                } else {
-                    // Anti-clockwise rotation
-                    rotationAngle -= 3
-                }
+//                // Rotate the view based on the drag direction
+//                if (touchAngle > startAngle) {
+//                    // Clockwise rotation
+//                    rotationAngle += 3
+//                } else {
+//                    // Anti-clockwise rotation
+//                    rotationAngle -= 3
+//                }
 
                 // Update starting coordinates for next touch move event
                 midPoint = calculateMidPoint(event)
                 previousDifference = distanceFromCenter
 
                 // Rotate the parent FrameLayout
-                rootView.rotation = rotationAngle
+//                rootView.rotation = rotationAngle
                 logDebug("Action: ACTION_MOVE")
                 return true
             }

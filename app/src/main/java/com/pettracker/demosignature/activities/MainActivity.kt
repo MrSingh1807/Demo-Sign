@@ -20,6 +20,7 @@ import com.pettracker.demosignature.BuildConfig
 import com.pettracker.demosignature.R
 import com.pettracker.demosignature.baseClass.BaseBindingActivity
 import com.pettracker.demosignature.databinding.ActivityMainBinding
+import com.pettracker.demosignature.stickerViewDemo.StickerViewTestActivity
 import com.pettracker.demosignature.utils.FileUtils
 import com.pettracker.demosignature.utils.PopupMenuCustomLayout
 import com.pettracker.demosignature.utils.cameraImageBitmap
@@ -145,7 +146,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(ActivityMainBindin
             }
             btnTesting2.setOnClickListener {
 //                showPopUpMenu()
-                showPopUpWindow(it)
+//                showPopUpWindow(it)
+                startActivity(Intent(this@MainActivity, StickerViewTestActivity::class.java))
+
+            }
+
+            newFilter.setOnClickListener {
 
             }
 
